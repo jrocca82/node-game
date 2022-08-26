@@ -1,37 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Document</title>
-	</head>
-	<body>
-		<h1>hello</h1>
-		<form action="login" method="post">
-			<input type="text" name="user" value="User name" />
-			<input type="text" name="password" value="Password" />
-			<div class="btn">Submit</div>
-		</form>
-	</body>
-	<script>
-		const btn = document.querySelector(".btn");
-		btn.addEventListener("click", function () {
-			const formData = new FormData(document.forms[0]);
-			const searchParams = new URLSearchParams();
-			for (let val of formData) {
-				console.log(val);
-				searchParams.append(val[0], val[1]);
-			}
-			console.log(searchParams);
-			fetch("/login", {
-				method: "post",
-				body: searchParams,
-			}).then(function(res) {
-                return res.json();
-            }).then(function(data){
-                console.log(data);
-            });
-		});
-	</script>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Browser Side Javascript</h1>
+    <input name="user" type="text" value="Jo" />
+    <button class="btn">Join</button>
+    <div class="output"></div>
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    const btn = document.querySelector(".btn");
+    const output = document.querySelector(".output");
+    const user = document.querySelector("input[name='user']");
+
+    btn.addEventListener("click", function() {
+        let id = "player_" + Math.floor(Date.now() * Math.random());
+        socket.emit("new player", id, user.value);
+    });
+
+    socket.on("players", listPlayers);
+
+    function listPlayers(players){
+        console.log(players);
+    };
+</script>
 </html>
